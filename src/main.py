@@ -54,14 +54,20 @@ def train(cfg_dict: DictConfig):
 
     # Set up logging with wandb.
     callbacks = []
+
+    # Get the Slurm job ID from enviroment variable
+    slurm_job_id = os.environ.get('SLURM_JOB_ID', 'unknown')
+    tags = cfg_dict.wandb.get("tags", [])
+    tags += [f"job_id={slurm_job_id}"] if slurm_job_id != "unknown" else []
     if cfg_dict.wandb.mode != "disabled":
         logger = WandbLogger(
             project=cfg_dict.wandb.project,
             mode=cfg_dict.wandb.mode,
-            name=f"{cfg_dict.wandb.name} ({output_dir.parent.name}/{output_dir.name})",
-            tags=cfg_dict.wandb.get("tags", None),
+            name=f"{cfg_dict.wandb.name} ({output_dir.name})",
+            tags=tags,
             log_model=False,
             save_dir=output_dir,
+            notes=f"outputs/{output_dir.parent.name}/{output_dir.name}",
             config=OmegaConf.to_container(cfg_dict),
         )
         callbacks.append(LearningRateMonitor("step", True))
