@@ -7,7 +7,7 @@ def add_addtional_context_index(
     indices: Int[Tensor, "*batch 2"],
     number_of_context_views: int,
 ) -> Int[Tensor, "*batch view"]:
-    left, right = indices.unbind(dim=-1)
+    left, right = indices[..., 0], indices[..., -1]
     # evenly distribute the additional context views between the left and right views
     ctx_indices = torch.stack(
         [

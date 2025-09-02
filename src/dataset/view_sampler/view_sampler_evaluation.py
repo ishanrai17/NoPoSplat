@@ -20,7 +20,7 @@ from .view_sampler import ViewSampler
 class ViewSamplerEvaluationCfg:
     name: Literal["evaluation"]
     index_path: Path
-    num_context_views: int
+    num_context_views: int | list[int]
 
 
 class ViewSamplerEvaluation(ViewSampler[ViewSamplerEvaluationCfg]):
@@ -65,9 +65,11 @@ class ViewSamplerEvaluation(ViewSampler[ViewSamplerEvaluationCfg]):
         overlap = entry.overlap if isinstance(entry.overlap, float) else 0.75 if entry.overlap == "large" else 0.25
         overlap = torch.tensor([overlap], dtype=torch.float32, device=device)
 
-        # Handle 2-view index for more views.
+        # Handle different views.
         v = self.num_context_views
-        if  v >= 3 and v > len(context_indices):
+        if isinstance(self.cfg.num_context_views, list):
+            v = len(context_indices)
+        if v != len(context_indices):
             context_indices = add_addtional_context_index(context_indices, v)
 
         return context_indices, target_indices, overlap
