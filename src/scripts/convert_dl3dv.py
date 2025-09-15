@@ -25,6 +25,10 @@ def get_example_keys(stage: Literal["test", "train"]) -> list[str]:
     for subset in subsets:
         subdir = INPUT_IMAGE_DIR / subset
         # iterate through all the subdirectories
+        if not subdir.exists():
+            print(f"Warning: {subdir} does not exist.", file=sys.stderr)
+            continue
+        
         for key in subdir.iterdir():
             if key.is_dir():
                 item = key.name.split('/')[-1]
