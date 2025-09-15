@@ -12,7 +12,7 @@ from torch import Tensor
 from tqdm import tqdm
 
 INPUT_IMAGE_DIR = Path("/users/bye/scratch/dl3dv/DL3DV-ALL-480P")
-OUTPUT_DIR = Path("/users/bye/scratch/dl3dv/DL3DV-ALL-480P/Chunks")
+OUTPUT_DIR = Path("/content/NoPoSplat/datasets/dl3dv")
 
 
 # Target 100 MB per chunk.
@@ -28,7 +28,7 @@ def get_example_keys(stage: Literal["test", "train"]) -> list[str]:
         if not subdir.exists():
             print(f"Warning: {subdir} does not exist.", file=sys.stderr)
             continue
-        
+
         for key in subdir.iterdir():
             if key.is_dir():
                 item = key.name.split('/')[-1]
